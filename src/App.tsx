@@ -4,10 +4,18 @@ import { Jug } from './components/Jug';
 import { TutorialModal } from './components/TutorialModal';
 import { WinModal } from './components/WinModal';
 
+function getTarget() {
+  const capacities = [4, 6, 7, 1, 2];
+
+  let min = 0;
+  let max = capacities.length - 1;
+  return capacities[Math.floor(Math.random() * (max - min + 1)) + min];
+}
+
 const JUGS_CAP = [8, 5, 3];
-const TARGET = 4;
 
 function App() {
+  const [target, setTarget] = useState(getTarget());
   const [currentVolumes, setCurrentVolumes] = useState<number[]>([0, 0, 0]);
   const [history, setHistory] = useState<number[][]>([]);
   const [moves, setMoves] = useState(0);
@@ -16,7 +24,7 @@ function App() {
   const [isWinModalOpen, setIsWinModalOpen] = useState(false);
   const [timeMs, setTimeMs] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [pourAnimation, setPourAnimation] = useState<{from: number, to: number} | null>(null);
+  const [pourAnimation, setPourAnimation] = useState<{ from: number, to: number } | null>(null);
 
   useEffect(() => {
     let interval: number | undefined;
@@ -38,7 +46,7 @@ function App() {
   };
 
   const checkWin = (volumes: number[]) => {
-    if (volumes.includes(TARGET)) {
+    if (volumes.includes(target)) {
       setIsPlaying(false);
       setIsWinModalOpen(true);
       spawnConfetti();
@@ -113,7 +121,7 @@ function App() {
   const performAction = (action: 'fill' | 'empty') => {
     if (selectedIdx === null) return;
     saveHistory();
-    
+
     setCurrentVolumes((prev) => {
       const newVols = [...prev];
       if (action === 'fill') {
@@ -145,6 +153,7 @@ function App() {
     setIsPlaying(false);
     setTimeMs(0);
     setIsWinModalOpen(false);
+    setTarget(getTarget());
   };
 
   return (
@@ -160,19 +169,19 @@ function App() {
               <span className="material-symbols-outlined text-cube-blue text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
               <div>
                 <p className="text-on-surface-variant text-label-sm font-label-sm">Đong đúng</p>
-                <p className="text-on-surface text-headline-h1 font-headline-h1">{TARGET} Lít</p>
+                <p className="text-on-surface text-headline-h1 font-headline-h1">{target} Lít</p>
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white p-6 rounded-xl border border-outline-variant/50 shadow-sm">
             <div className="flex justify-between items-center mb-4">
-              <span className="text-on-surface-variant font-metadata text-metadata uppercase tracking-widest">Thống kê</span>
+              <span className="text-on-surface-variant font-metadata text-metadata uppercase tracking-widest">Bảng điểm</span>
               <span className="material-symbols-outlined text-tertiary">analytics</span>
             </div>
             <div className="space-y-4">
               <div className="flex justify-between">
-                <span className="text-on-surface-variant">Bước đi:</span>
+                <span className="text-on-surface-variant">Số lần đổ nước:</span>
                 <span className="text-on-surface font-metadata text-xl font-bold">{moves}</span>
               </div>
               <div className="flex justify-between">
@@ -181,15 +190,15 @@ function App() {
               </div>
             </div>
             <div className="mt-6 flex gap-3">
-              <button 
-                className="flex-1 bg-surface-container-high hover:bg-surface-container-highest text-primary py-3 rounded-lg flex items-center justify-center gap-2 transition-all" 
+              <button
+                className="flex-1 bg-surface-container-high hover:bg-surface-container-highest text-primary py-3 rounded-lg flex items-center justify-center gap-2 transition-all"
                 onClick={undo}
                 disabled={history.length === 0}
               >
                 <span className="material-symbols-outlined">undo</span> Hoàn tác
               </button>
-              <button 
-                className="flex-1 bg-error-container hover:bg-error-container/80 text-error py-3 rounded-lg flex items-center justify-center gap-2 transition-all" 
+              <button
+                className="flex-1 bg-error-container hover:bg-error-container/80 text-error py-3 rounded-lg flex items-center justify-center gap-2 transition-all"
                 onClick={resetGame}
               >
                 <span className="material-symbols-outlined">restart_alt</span> Reset
@@ -216,9 +225,9 @@ function App() {
               if (pourAnimation && pourAnimation.from === idx) {
                 pourDirection = pourAnimation.from < pourAnimation.to ? 'right' : 'left';
               }
-              
+
               return (
-                <Jug 
+                <Jug
                   key={idx}
                   id={idx}
                   capacity={cap}
@@ -233,23 +242,29 @@ function App() {
 
           {/* Action Controls */}
           <div className="flex gap-4 mt-8 bg-white p-2 rounded-full shadow-lg border border-outline-variant/30">
-            <button 
-              className="disabled:opacity-30 p-4 rounded-full bg-cube-blue text-white hover:scale-110 transition-transform shadow-md" 
+            <button
+              className="disabled:opacity-30 px-6 py-4 rounded-full bg-cube-blue text-white hover:scale-105 transition-transform shadow-md flex items-center gap-2"
               disabled={selectedIdx === null}
               onClick={() => performAction('fill')}
             >
               <span className="material-symbols-outlined">format_color_fill</span>
+              <span className="font-bold">Bơm đầy</span>
             </button>
-            <button 
-              className="disabled:opacity-30 p-4 rounded-full bg-lava-orange text-white hover:scale-110 transition-transform shadow-md" 
-              disabled={selectedIdx === null} 
+            <button
+              className="disabled:opacity-30 px-6 py-4 rounded-full bg-lava-orange text-white hover:scale-105 transition-transform shadow-md flex items-center gap-2"
+              disabled={selectedIdx === null}
               onClick={() => performAction('empty')}
             >
               <span className="material-symbols-outlined">delete_forever</span>
+              <span className="font-bold">Đổ đi</span>
             </button>
           </div>
           <p className={`text-on-surface-variant font-metadata mt-2 ${selectedIdx === null ? 'animate-pulse' : ''}`}>
-            {selectedIdx === null ? "Chọn một bình để thao tác" : `Đang chọn bình ${JUGS_CAP[selectedIdx]}L. Chọn bình khác để rót vào.`}
+            {selectedIdx === null 
+              ? "Chọn một bình để thao tác" 
+              : currentVolumes[selectedIdx] === 0 
+                ? `Đang chọn bình ${JUGS_CAP[selectedIdx]}L. Bình đang rỗng, hãy bấm nút Bơm đầy nước nhé!` 
+                : `Đang chọn bình ${JUGS_CAP[selectedIdx]}L. Hãy chọn bình khác để rót nước sang, hoặc đổ đi nhé!`}
           </p>
         </section>
       </main>

@@ -17,7 +17,7 @@ export const WinModal: React.FC<WinModalProps> = ({ isOpen, moves, onReset }) =>
         </span>
         <h2 className="text-on-surface font-headline-h1 text-headline-h1 mb-2">XUẤT SẮC!</h2>
         <p className="text-on-surface-variant mb-8">
-          Bạn đã hoàn thành thử thách trong <span className="font-bold text-tertiary">{moves}</span> bước.
+          Hoan hô, bạn đã giải được câu đố chỉ với <span className="font-bold text-tertiary">{moves}</span> bước!
         </p>
         <button 
           className="w-full bg-tertiary text-on-tertiary py-4 rounded-xl font-bold text-xl hover:scale-105 transition-transform shadow-lg" 

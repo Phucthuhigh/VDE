@@ -8,14 +8,30 @@
   }
 }
 
-@keyframes wave {
-  0% { transform: translateX(-50%) skewY(-2deg); }
-  50% { transform: translateX(-30%) skewY(2deg); }
-  100% { transform: translateX(-50%) skewY(-2deg); }
+@keyframes liquidSlosh {
+  0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); border-radius: 50%; }
+  33% { transform: translate(-48%, -45%) rotate(3deg) scale(1.05, 0.95); border-radius: 48% 52% 49% 51%; }
+  66% { transform: translate(-52%, -55%) rotate(-3deg) scale(0.95, 1.05); border-radius: 52% 48% 51% 49%; }
+  100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); border-radius: 50%; }
 }
 
-.water-surface {
-  animation: wave 3s ease-in-out infinite;
+.water-surface-layer {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 130%;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.35);
+  animation: liquidSlosh 3s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.water-surface-layer:nth-child(2) {
+  background: rgba(255, 255, 255, 0.2);
+  animation-delay: -1.5s;
+  animation-duration: 4s;
+  width: 115%;
+  height: 16px;
 }
 
 .isometric-card {

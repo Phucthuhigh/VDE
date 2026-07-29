@@ -74,7 +74,10 @@ export const Jug: React.FC<JugProps> = ({
           style={{ height: `${percentage}%` }}
         >
           {currentVolume > 0 && (
-            <div className="absolute top-0 left-0 w-full h-4 bg-white/40 water-surface"></div>
+            <>
+              <div className="water-surface-layer"></div>
+              <div className="water-surface-layer"></div>
+            </>
           )}
         </div>
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
