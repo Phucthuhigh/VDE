@@ -46,9 +46,6 @@ const victoryHowl = new Howl({
 });
 const gameOverHowl = new Howl({ src: [gameOverSfx], html5: false, volume: 0.85 });
 
-let activeScoopId: number | null = null;
-let activePourId: number | null = null;
-
 const getStarRating = (remainingMs: number): number => {
   const sec = Math.max(0, Math.ceil(remainingMs / 1000));
   if (sec > 144) return 5;
@@ -89,7 +86,7 @@ function App() {
         html5: false,
         volume: 0.85,
         autoplay: true,
-        onend: function () {
+        onend: function (this: Howl) {
           this.unload();
         }
       });
