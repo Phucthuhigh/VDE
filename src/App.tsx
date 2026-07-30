@@ -23,7 +23,7 @@ function App() {
   const game = useWaterJugGame(audio);
 
   return (
-    <div className="bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-100 via-cyan-300 to-sky-500 text-on-surface font-body-md min-h-screen overflow-x-hidden relative flex flex-col">
+    <div className={`bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-100 via-cyan-300 to-sky-500 text-on-surface font-body-md min-h-screen overflow-x-hidden relative flex flex-col ${game.isDamageFlash ? 'animate-damage-shake' : ''}`}>
       <BubblesBackground />
       <SeaweedAnimation />
       <FishAnimation />

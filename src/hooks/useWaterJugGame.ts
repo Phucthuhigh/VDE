@@ -7,6 +7,8 @@ import { useCountdownTimer } from './useCountdownTimer';
 import { useTrackedTimers } from './useTrackedTimers';
 
 const MAX_HISTORY = 20;
+// Must match the `.animate-damage-shake` animation duration in src/index.css,
+// which plays the matching screen-shake for the same red flash window.
 const DAMAGE_FLASH_MS = 280;
 
 // Pour animation timeline (all offsets in ms from pour start).
