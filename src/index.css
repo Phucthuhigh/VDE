@@ -8,6 +8,46 @@
   }
 }
 
+@keyframes alarmRingCycle {
+  0%, 100% { transform: scale(1.1) rotate(0deg) translateY(0); }
+  /* Ring Burst Phase (0.45s active alarm shake) */
+  3% { transform: scale(1.12) rotate(-8deg) translateY(-1px); }
+  6% { transform: scale(1.14) rotate(8deg) translateY(-2px); }
+  9% { transform: scale(1.14) rotate(-8deg) translateY(-2px); }
+  12% { transform: scale(1.14) rotate(8deg) translateY(-1px); }
+  15% { transform: scale(1.12) rotate(-6deg) translateY(-1px); }
+  18% { transform: scale(1.12) rotate(6deg) translateY(0); }
+  21% { transform: scale(1.1) rotate(-4deg) translateY(0); }
+  24% { transform: scale(1.1) rotate(4deg) translateY(0); }
+  27% { transform: scale(1.1) rotate(-2deg) translateY(0); }
+  30% { transform: scale(1.1) rotate(0deg) translateY(0); }
+  /* Rest / Pause Phase (0.85s quiet rest interval) */
+  35%, 99% { transform: scale(1.1) rotate(0deg) translateY(0); }
+}
+
+.animate-alarm-ring {
+  animation: alarmRingCycle 1.3s infinite cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+/* 1.0s Timer Tick Synchronized Shake Animation */
+@keyframes timerTickSyncRing {
+  0% { transform: scale(1.18) rotate(0deg) translateY(0); }
+  4% { transform: scale(1.18) rotate(-7deg) translateY(-2px); }
+  8% { transform: scale(1.18) rotate(7deg) translateY(-2px); }
+  12% { transform: scale(1.16) rotate(-7deg) translateY(-1px); }
+  16% { transform: scale(1.16) rotate(7deg) translateY(-1px); }
+  20% { transform: scale(1.14) rotate(-5deg) translateY(0); }
+  24% { transform: scale(1.14) rotate(5deg) translateY(0); }
+  28% { transform: scale(1.12) rotate(-3deg) translateY(0); }
+  32% { transform: scale(1.12) rotate(3deg) translateY(0); }
+  36% { transform: scale(1.1) rotate(0deg) translateY(0); }
+  40%, 100% { transform: scale(1.1) rotate(0deg) translateY(0); }
+}
+
+.animate-timer-tick-sync {
+  animation: timerTickSyncRing 1.0s infinite cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
 @keyframes liquidSlosh {
   0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); border-radius: 50%; }
   33% { transform: translate(-48%, -45%) rotate(3deg) scale(1.05, 0.95); border-radius: 48% 52% 49% 51%; }
@@ -60,7 +100,7 @@
 }
 
 .pour-animation {
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stream {

@@ -62,8 +62,23 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ isOpen, onClose })
 
           {/* Slide 3: Rót chuyển */}
           <div className={`tutorial-slide p-8 flex flex-col items-center justify-center h-full text-center ${currentSlide !== 2 ? 'hidden' : ''}`}>
-            <div className="w-full max-w-sm mb-6 overflow-hidden rounded-xl bg-slate-100 shadow-inner">
-              <img alt="Minh họa rót nước" className="w-full h-auto object-cover max-h-[160px]" src="https://lh3.googleusercontent.com/aida/AP1WRLtCUCUEyDN99RiCM9Czk2s89ObXUJQ9c-aPtRRcfLrY_NgEgusEW5zAHYSvgFYnp8BalR30dP4Lr5m4XMbewbAtkqxnev1y6Eh3B3PdlS2egh2Q6WXaMovOn1xSEoQSqjPNW2jElgZyZvQntCrkJeMR4rPAlo-4O1hr7TpQ1aLYydYan2kYNsZaXg4ilyiwHtX4bjFclXmPKcT59RO5YkBky-39CsWqHa62oy635ZaTpqPfWTUlWdRuaK9X" />
+            <div className="w-full max-w-xs mb-6 overflow-hidden rounded-xl bg-slate-100 flex items-center justify-center p-6">
+              <div className="flex items-center gap-6 relative">
+                <div className="w-20 h-28 glass-jug rounded-b-xl border-t-0 relative overflow-hidden flex flex-col justify-end">
+                  <div className="w-full h-3/4 bg-cube-blue/60 relative">
+                    <div className="water-surface-layer"></div>
+                  </div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="material-symbols-outlined text-tertiary text-4xl animate-pulse">transform</span>
+                  <span className="text-xs font-bold text-tertiary mt-1">Rót sang</span>
+                </div>
+                <div className="w-16 h-24 glass-jug rounded-b-xl border-t-0 relative overflow-hidden flex flex-col justify-end">
+                  <div className="w-full h-1/3 bg-cube-blue/60 relative">
+                    <div className="water-surface-layer"></div>
+                  </div>
+                </div>
+              </div>
             </div>
             <h2 className="text-on-surface font-headline-h1 text-2xl md:text-3xl mb-4">Rót chuyển</h2>
             <p className="text-on-surface-variant leading-relaxed">
@@ -109,8 +124,22 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ isOpen, onClose })
 
           {/* Slide 6: Thắng như thế nào */}
           <div className={`tutorial-slide p-8 flex flex-col items-center justify-center h-full text-center ${currentSlide !== 5 ? 'hidden' : ''}`}>
-            <div className="w-full max-w-sm mb-6 overflow-hidden rounded-xl bg-slate-100 shadow-inner">
-              <img alt="Mục tiêu thắng lợi" className="w-full h-auto object-cover max-h-[160px]" src="https://lh3.googleusercontent.com/aida/AP1WRLutJWi1tP0eAHn0CHqwUsxvzj7EkxOGaN4nV93ZG6oXypZIQvq9X4y6-X4svjW1wDZs8DicpXhPXvCQO6UQwfk_CpL3aVgnzI3fCiQ8LeUb6PiRzgz7_pCYxq9CNLx69ooc1hamxWObM5oqXHzjwCJFz8jIZ7_6NK7BuuzM5OedZJ8oW_R1hKcJewmHkJdLzpEyXwBiCR2cvqfft-dcqqS3BhDPXZirMMyJXDvSMJSpTXtkjs29yfzG9JPm" />
+            <div className="w-full max-w-xs mb-6 overflow-hidden rounded-xl bg-slate-100 flex items-center justify-center p-6">
+              <div className="flex flex-col items-center gap-3">
+                <div className="relative flex items-center justify-center">
+                  <div className="w-24 h-32 glass-jug rounded-b-xl border-t-0 border-2 border-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.5)] relative overflow-hidden flex flex-col justify-end">
+                    <div className="w-full h-1/2 bg-cube-blue/80 relative">
+                      <div className="water-surface-layer"></div>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-2xl font-black text-blue-950 bg-white/80 px-3 py-1 rounded-full shadow-sm">4L</span>
+                    </div>
+                  </div>
+                  <span className="material-symbols-outlined text-yellow-500 text-5xl absolute -top-4 -right-4 drop-shadow-md animate-bounce" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    emoji_events
+                  </span>
+                </div>
+              </div>
             </div>
             <h2 className="text-on-surface font-headline-h1 text-2xl md:text-3xl mb-4">Chiến thắng</h2>
             <p className="text-on-surface-variant leading-relaxed">
