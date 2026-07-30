@@ -537,7 +537,7 @@ function App() {
               </span>
 
               {/* Test Trừ Tim Button (Disabled for Production) */}
-              <button
+              {/* <button
                 onClick={() => {
                   setRemainingMs((prev) => Math.max(0, prev - 36000));
                   playStarLossSFX();
@@ -545,7 +545,7 @@ function App() {
                 className="w-full mt-1 py-2 px-3 bg-red-500/20 hover:bg-red-500 text-red-800 hover:text-white text-xs font-bold rounded-xl border border-red-400/50 flex items-center justify-center gap-1.5 transition-all hover:scale-105 shadow-sm"
               >
                 <span className="material-symbols-outlined text-base">heart_minus</span> Test Trừ Tim (-1 ❤️)
-              </button>
+              </button> */}
             </div>
 
             <div className="space-y-4">
