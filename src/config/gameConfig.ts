@@ -6,7 +6,7 @@ export const TOTAL_TIME_MS = 180_000; // 3 minutes
 
 // Candidate target volumes; one is picked at random each round.
 // All values are reachable with JUGS_CAPACITIES = [8, 5, 3].
-const TARGET_CANDIDATES = [4, 6, 7, 1, 2] as const;
+const TARGET_CANDIDATES = [4, 7, 1] as const;
 
 export function pickRandomTarget(): number {
   return TARGET_CANDIDATES[Math.floor(Math.random() * TARGET_CANDIDATES.length)];
