@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
-import { TopNavBar } from './components/TopNavBar';
+import { BubblesBackground } from './components/BubblesBackground';
+import { QuickRulesSidebar } from './components/QuickRulesSidebar';
 import { Jug } from './components/Jug';
 import { TutorialModal } from './components/TutorialModal';
 import { WinModal } from './components/WinModal';
+import { SeaweedAnimation } from './components/SeaweedAnimation';
+import { FishAnimation } from './components/FishAnimation';
 
 function getTarget() {
   const capacities = [4, 6, 7, 1, 2];
@@ -21,6 +24,7 @@ function App() {
   const [moves, setMoves] = useState(0);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [isTutorialOpen, setIsTutorialOpen] = useState(true);
+  const [isRulesExpanded, setIsRulesExpanded] = useState(true);
   const [isWinModalOpen, setIsWinModalOpen] = useState(false);
   const [timeMs, setTimeMs] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -157,48 +161,50 @@ function App() {
   };
 
   return (
-    <div className="bg-background text-on-surface font-body-md min-h-screen overflow-x-hidden">
-      <TopNavBar onToggleTutorial={() => setIsTutorialOpen(true)} />
-
-      <main className="pt-24 pb-12 px-gutter max-w-max-width mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[calc(100vh-80px)]">
+    <div className="bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-100 via-cyan-300 to-sky-500 text-on-surface font-body-md min-h-screen overflow-x-hidden relative flex flex-col">
+      <BubblesBackground />
+      <SeaweedAnimation />
+      <FishAnimation />
+      
+      <main className="flex-1 w-full max-w-[1600px] mx-auto p-4 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8 transition-all">
         {/* Left Sidebar / Stats */}
-        <aside className="lg:col-span-3 flex flex-col gap-6 order-2 lg:order-1">
-          <div className="bg-white p-6 rounded-xl border border-outline-variant/50 shadow-sm isometric-card">
-            <h3 className="text-primary font-headline-h2 text-headline-h2 mb-4">Mục tiêu</h3>
-            <div className="flex items-center gap-3 bg-primary-container p-4 rounded-lg">
-              <span className="material-symbols-outlined text-cube-blue text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
+        <aside className="w-full lg:w-72 shrink-0 flex flex-col gap-6 order-2 lg:order-1 z-10">
+          <div className="glass-panel p-6 rounded-2xl isometric-card">
+            <h3 className="text-blue-900 font-headline-h2 text-headline-h2 mb-4 drop-shadow-sm">Mục tiêu</h3>
+            <div className="flex items-center gap-3 bg-white/40 p-4 rounded-xl shadow-inner border border-white/50">
+              <span className="material-symbols-outlined text-blue-700 text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
               <div>
-                <p className="text-on-surface-variant text-label-sm font-label-sm">Đong đúng</p>
-                <p className="text-on-surface text-headline-h1 font-headline-h1">{target} Lít</p>
+                <p className="text-blue-900/80 text-label-sm font-label-sm font-bold">Đong đúng</p>
+                <p className="text-blue-900 text-headline-h1 font-headline-h1 drop-shadow-sm">{target} Lít</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-xl border border-outline-variant/50 shadow-sm">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-on-surface-variant font-metadata text-metadata uppercase tracking-widest">Bảng điểm</span>
-              <span className="material-symbols-outlined text-tertiary">analytics</span>
+          <div className="glass-panel p-6 rounded-2xl">
+            <div className="flex justify-between items-center mb-4 text-blue-900 drop-shadow-sm">
+              <span className="font-metadata text-metadata uppercase tracking-widest font-bold">Bảng điểm</span>
+              <span className="material-symbols-outlined">analytics</span>
             </div>
             <div className="space-y-4">
-              <div className="flex justify-between">
-                <span className="text-on-surface-variant">Số lần đổ nước:</span>
-                <span className="text-on-surface font-metadata text-xl font-bold">{moves}</span>
+              <div className="flex justify-between text-blue-900">
+                <span className="font-medium">Số lần đổ nước:</span>
+                <span className="font-metadata text-xl font-bold">{moves}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-on-surface-variant">Thời gian:</span>
-                <span className="text-on-surface font-metadata text-xl font-bold">{formatTime(timeMs)}</span>
+              <div className="flex justify-between text-blue-900">
+                <span className="font-medium">Thời gian:</span>
+                <span className="font-metadata text-xl font-bold">{formatTime(timeMs)}</span>
               </div>
             </div>
             <div className="mt-6 flex gap-3">
               <button
-                className="flex-1 bg-surface-container-high hover:bg-surface-container-highest text-primary py-3 rounded-lg flex items-center justify-center gap-2 transition-all"
+                className="flex-1 bg-white/70 hover:bg-white text-blue-800 py-3 rounded-xl flex items-center justify-center gap-2 transition-all font-bold shadow-md hover:shadow-lg disabled:opacity-50 disabled:hover:bg-white/70"
                 onClick={undo}
                 disabled={history.length === 0}
               >
                 <span className="material-symbols-outlined">undo</span> Hoàn tác
               </button>
               <button
-                className="flex-1 bg-error-container hover:bg-error-container/80 text-error py-3 rounded-lg flex items-center justify-center gap-2 transition-all"
+                className="flex-1 bg-red-400/80 hover:bg-red-400 text-white py-3 rounded-xl flex items-center justify-center gap-2 transition-all font-bold shadow-md hover:shadow-lg"
                 onClick={resetGame}
               >
                 <span className="material-symbols-outlined">restart_alt</span> Reset
@@ -208,13 +214,25 @@ function App() {
         </aside>
 
         {/* Center: Game Area */}
-        <section className="lg:col-span-9 flex flex-col items-center justify-center gap-12 order-1 lg:order-2 relative">
+        <section className="flex-1 flex flex-col items-center justify-center gap-12 order-1 lg:order-2 relative rounded-3xl p-8 min-h-[600px] z-10">
+          {/* Tutorial Button (Top Right) */}
+          <button 
+            onClick={() => setIsTutorialOpen(true)}
+            className="absolute top-6 right-6 bg-white/80 hover:bg-white text-blue-600 px-4 py-2 rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2"
+          >
+            <span className="material-symbols-outlined">help</span>
+            <span className="hidden sm:inline">Hướng dẫn chi tiết</span>
+          </button>
+
           {/* Reservoir */}
-          <div className="relative group">
-            <div className="absolute -inset-4 bg-cube-blue/20 blur-xl rounded-full opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div className="w-48 h-12 bg-white/40 border-2 border-primary-container rounded-t-3xl flex items-center justify-center relative overflow-hidden glass-jug">
-              <div className="absolute inset-0 bg-cube-blue/40 water-surface"></div>
-              <span className="relative z-10 text-primary font-bold tracking-tighter uppercase text-sm">Nguồn nước vô tận</span>
+          <div className="relative group mt-8">
+            <div className="absolute -inset-4 bg-blue-300/40 blur-2xl rounded-full opacity-50 group-hover:opacity-100 transition-opacity"></div>
+            <div className="w-56 h-14 bg-white/40 border-2 border-white/60 rounded-t-[40px] flex items-center justify-center relative overflow-hidden glass-jug shadow-[0_-10px_30px_rgba(255,255,255,0.3)]">
+              <div className="absolute inset-0 bg-blue-500/30">
+                <div className="water-surface-layer"></div>
+                <div className="water-surface-layer"></div>
+              </div>
+              <span className="relative z-10 text-blue-900 font-extrabold tracking-widest uppercase text-sm drop-shadow-md">Nguồn nước vô tận</span>
             </div>
           </div>
 
@@ -241,45 +259,43 @@ function App() {
           </div>
 
           {/* Action Controls */}
-          <div className="flex gap-4 mt-8 bg-white p-2 rounded-full shadow-lg border border-outline-variant/30">
+          <div className="flex gap-4 mt-8 glass-panel p-3 rounded-full">
             <button
-              className="disabled:opacity-30 px-6 py-4 rounded-full bg-cube-blue text-white hover:scale-105 transition-transform shadow-md flex items-center gap-2"
+              className="disabled:opacity-40 disabled:hover:scale-100 px-8 py-4 rounded-full bg-blue-500 text-white hover:bg-blue-400 hover:scale-110 hover:-translate-y-1 transition-all shadow-[0_5px_15px_rgba(59,130,246,0.5)] flex items-center gap-2"
               disabled={selectedIdx === null}
               onClick={() => performAction('fill')}
             >
-              <span className="material-symbols-outlined">format_color_fill</span>
-              <span className="font-bold">Bơm đầy</span>
+              <span className="material-symbols-outlined text-2xl">format_color_fill</span>
+              <span className="font-extrabold text-lg tracking-wide">Bơm đầy</span>
             </button>
             <button
-              className="disabled:opacity-30 px-6 py-4 rounded-full bg-lava-orange text-white hover:scale-105 transition-transform shadow-md flex items-center gap-2"
+              className="disabled:opacity-40 disabled:hover:scale-100 px-8 py-4 rounded-full bg-red-400 text-white hover:bg-red-300 hover:scale-110 hover:-translate-y-1 transition-all shadow-[0_5px_15px_rgba(248,113,113,0.5)] flex items-center gap-2"
               disabled={selectedIdx === null}
               onClick={() => performAction('empty')}
             >
-              <span className="material-symbols-outlined">delete_forever</span>
-              <span className="font-bold">Đổ đi</span>
+              <span className="material-symbols-outlined text-2xl">delete_forever</span>
+              <span className="font-extrabold text-lg tracking-wide">Đổ đi</span>
             </button>
           </div>
-          <p className={`text-on-surface-variant font-metadata mt-2 ${selectedIdx === null ? 'animate-pulse' : ''}`}>
-            {selectedIdx === null 
-              ? "Chọn một bình để thao tác" 
-              : currentVolumes[selectedIdx] === 0 
-                ? `Đang chọn bình ${JUGS_CAP[selectedIdx]}L. Bình đang rỗng, hãy bấm nút Bơm đầy nước nhé!` 
-                : `Đang chọn bình ${JUGS_CAP[selectedIdx]}L. Hãy chọn bình khác để rót nước sang, hoặc đổ đi nhé!`}
-          </p>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="w-full py-8 border-t border-outline-variant/30 mt-auto bg-white/50">
-        <div className="flex flex-col md:flex-row justify-between items-center px-gutter max-w-max-width mx-auto gap-4">
-          <p className="text-on-surface-variant font-metadata text-metadata">© 2024 Voxel Water Jug Puzzle. Crafted with Isometric Minimalism.</p>
-          <div className="flex gap-6">
-            <a className="text-on-surface-variant hover:text-tertiary font-metadata text-metadata" href="#">Điều khoản</a>
-            <a className="text-on-surface-variant hover:text-tertiary font-metadata text-metadata" href="#">Bảo mật</a>
-            <a className="text-on-surface-variant hover:text-tertiary font-metadata text-metadata" href="#">Cộng đồng</a>
+          <div className="h-8">
+            <p className={`text-white font-medium text-lg drop-shadow-md transition-all ${selectedIdx === null ? 'animate-pulse opacity-80' : 'opacity-100'}`}>
+              {selectedIdx === null 
+                ? "Chọn một bình để thao tác" 
+                : currentVolumes[selectedIdx] === 0 
+                  ? `Đang chọn bình ${JUGS_CAP[selectedIdx]}L. Bình rỗng, hãy bấm Bơm đầy nhé!` 
+                  : `Đang chọn bình ${JUGS_CAP[selectedIdx]}L. Hãy chọn bình khác để rót sang, hoặc đổ đi nhé!`}
+            </p>
           </div>
+        </section>
+
+        {/* Right Sidebar: Quick Rules */}
+        <div className="order-3 shrink-0 flex z-20">
+          <QuickRulesSidebar 
+            isExpanded={isRulesExpanded} 
+            onToggle={() => setIsRulesExpanded(!isRulesExpanded)} 
+          />
         </div>
-      </footer>
+      </main>
 
       <TutorialModal isOpen={isTutorialOpen} onClose={() => setIsTutorialOpen(false)} />
       <WinModal isOpen={isWinModalOpen} moves={moves} onReset={resetGame} />
