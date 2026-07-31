@@ -1,15 +1,32 @@
-// Capacities (in liters) of the three jugs used in every round.
-export const JUGS_CAPACITIES = [8, 5, 3] as const;
-
 // Total countdown duration for a round.
-export const TOTAL_TIME_MS = 180_000; // 3 minutes
+export const TOTAL_TIME_MS = 300_000; // 5 minutes
 
-// Candidate target volumes; one is picked at random each round.
-// All values are reachable with JUGS_CAPACITIES = [8, 5, 3].
-const TARGET_CANDIDATES = [1, 4, 7] as const;
+export interface RoundPreset {
+  // Capacities (in liters) of the three jugs used this round.
+  capacities: readonly [number, number, number];
+  // Valid target volumes for this capacity set: reachable, not equal to any
+  // jug's own capacity (that would be a 1-move win), and not a simple
+  // pairwise sum/difference of two capacities (guessable at a glance, e.g.
+  // 5-3=2 or 3+3=6) — only genuinely non-obvious puzzles are listed.
+  targets: readonly number[];
+}
 
-export function pickRandomTarget(): number {
-  return TARGET_CANDIDATES[Math.floor(Math.random() * TARGET_CANDIDATES.length)];
+export const ROUND_PRESETS: readonly RoundPreset[] = [
+  { capacities: [8, 5, 3], targets: [1, 4, 7] },
+  { capacities: [9, 5, 4], targets: [2, 3, 6, 7] },
+  { capacities: [9, 8, 7], targets: [3, 4, 5, 6] },
+  { capacities: [9, 7, 2], targets: [1, 3, 6, 8] },
+];
+
+export interface Round {
+  capacities: readonly [number, number, number];
+  target: number;
+}
+
+export function pickRandomRound(): Round {
+  const preset = ROUND_PRESETS[Math.floor(Math.random() * ROUND_PRESETS.length)];
+  const target = preset.targets[Math.floor(Math.random() * preset.targets.length)];
+  return { capacities: preset.capacities, target };
 }
 
 // Star rating decays as time runs out, in 5 even steps across TOTAL_TIME_MS.
@@ -30,10 +47,10 @@ export function formatTime(ms: number): string {
   return `${m}:${s}`;
 }
 
-// Stereo panning by jug position on screen: leftmost jug (index 0) pans
-// left, rightmost jug pans right, middle jug stays centered.
-export function getStereoPan(jugIdx: number): number {
+// Stereo panning by jug position on screen: leftmost jug pans left,
+// rightmost jug pans right, everything in between stays centered.
+export function getStereoPan(jugIdx: number, totalJugs: number): number {
   if (jugIdx === 0) return -0.5;
-  if (jugIdx === JUGS_CAPACITIES.length - 1) return 0.5;
+  if (jugIdx === totalJugs - 1) return 0.5;
   return 0;
 }

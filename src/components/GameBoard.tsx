@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react';
-import { JUGS_CAPACITIES } from '../config/gameConfig';
 import type { PourAnimationState } from '../hooks/useWaterJugGame';
 import { Jug } from './Jug';
 
 interface GameBoardProps {
+  capacities: readonly number[];
   currentVolumes: number[];
   selectedIdx: number | null;
   pourAnimation: PourAnimationState | null;
@@ -16,9 +16,9 @@ interface GameBoardProps {
   onOpenTutorial: () => void;
 }
 
-function getStatusMessage(selectedIdx: number | null, currentVolumes: number[]): string {
+function getStatusMessage(selectedIdx: number | null, currentVolumes: number[], capacities: readonly number[]): string {
   if (selectedIdx === null) return 'Chọn một bình để thao tác';
-  const selectedCap = JUGS_CAPACITIES[selectedIdx];
+  const selectedCap = capacities[selectedIdx];
   if (currentVolumes[selectedIdx] === 0) {
     return `Đang chọn bình ${selectedCap}L. Bình rỗng, hãy bấm Bơm đầy nhé!`;
   }
@@ -26,6 +26,7 @@ function getStatusMessage(selectedIdx: number | null, currentVolumes: number[]):
 }
 
 export function GameBoard({
+  capacities,
   currentVolumes,
   selectedIdx,
   pourAnimation,
@@ -37,7 +38,7 @@ export function GameBoard({
   onEmpty,
   onOpenTutorial,
 }: GameBoardProps) {
-  const statusMessage = getStatusMessage(selectedIdx, currentVolumes);
+  const statusMessage = getStatusMessage(selectedIdx, currentVolumes, capacities);
 
   return (
     <section className="flex-1 flex flex-col items-center justify-center gap-12 order-1 lg:order-2 relative rounded-3xl p-8 min-h-[600px] z-10">
@@ -73,7 +74,7 @@ export function GameBoard({
 
       {/* Floating Islands & Jugs */}
       <div className="w-full flex flex-wrap justify-center items-end gap-8 md:gap-16 mt-8">
-        {JUGS_CAPACITIES.map((cap, idx) => {
+        {capacities.map((cap, idx) => {
           const isSourceJug = pourAnimation?.from === idx;
 
           return (

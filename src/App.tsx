@@ -48,6 +48,7 @@ function App() {
         />
 
         <GameBoard
+          capacities={game.capacities}
           currentVolumes={game.currentVolumes}
           selectedIdx={game.selectedIdx}
           pourAnimation={game.pourAnimation}

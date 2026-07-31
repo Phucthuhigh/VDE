@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState, type CSSProperties } from 'react';
 import confetti from 'canvas-confetti';
 
-import { JUGS_CAPACITIES, TOTAL_TIME_MS, getStereoPan, pickRandomTarget } from '../config/gameConfig';
+import { TOTAL_TIME_MS, getStereoPan, pickRandomRound } from '../config/gameConfig';
 import type { GameAudio } from './useGameAudio';
 import { useCountdownTimer } from './useCountdownTimer';
 import { useTrackedTimers } from './useTrackedTimers';
@@ -42,7 +42,7 @@ interface PourTransform {
 
 // Pure geometry: figure out how far the source jug must travel and tilt so
 // its spout lines up above the target jug, plus which way to pan the SFX.
-function calculatePourTransform(fromRect: DOMRect, toRect: DOMRect, from: number, to: number): PourTransform {
+function calculatePourTransform(fromRect: DOMRect, toRect: DOMRect, from: number, to: number, totalJugs: number): PourTransform {
   const tiltRad = (POUR_TILT_DEG * Math.PI) / 180;
   const tiltSign: 1 | -1 = from < to ? 1 : -1;
 
@@ -58,7 +58,7 @@ function calculatePourTransform(fromRect: DOMRect, toRect: DOMRect, from: number
   const deltaX = desiredSpoutX - sourceCenterX - tiltSign * spoutXOffset;
   const deltaY = (toRect.top - SPOUT_CLEARANCE_PX + spoutYHeight) - (fromRect.top + fromRect.height);
 
-  return { deltaX, deltaY, tiltSign, toPan: getStereoPan(to) };
+  return { deltaX, deltaY, tiltSign, toPan: getStereoPan(to, totalJugs) };
 }
 
 // Every pour-animation frame shares the same positioning/stacking rules;
@@ -74,7 +74,10 @@ function buildPourStyle(transform: string, transition: string): CSSProperties {
 }
 
 export function useWaterJugGame(audio: GameAudio) {
-  const [target, setTarget] = useState(pickRandomTarget);
+  // Capacities and target are tied to the same round preset, so they're kept
+  // in one state value to guarantee they always change together.
+  const [round, setRound] = useState(pickRandomRound);
+  const { capacities, target } = round;
   const [currentVolumes, setCurrentVolumes] = useState<number[]>([0, 0, 0]);
   const [history, setHistory] = useState<number[][]>([]);
   const [moves, setMoves] = useState(0);
@@ -160,7 +163,7 @@ export function useWaterJugGame(audio: GameAudio) {
 
   const pour = useCallback((from: number, to: number) => {
     if (currentVolumes[from] === 0) return;
-    if (currentVolumes[to] === JUGS_CAPACITIES[to]) return;
+    if (currentVolumes[to] === capacities[to]) return;
     // Block re-entrancy from another in-flight pour, and from a fill/empty
     // animation still running on some jug — both write to `currentVolumes`
     // via their own interval, and if they targeted the same index the two
@@ -168,7 +171,7 @@ export function useWaterJugGame(audio: GameAudio) {
     if (pourAnimation || isActionBusy) return;
 
     saveHistory();
-    const spaceInTo = JUGS_CAPACITIES[to] - currentVolumes[to];
+    const spaceInTo = capacities[to] - currentVolumes[to];
     const amountToPour = Math.min(currentVolumes[from], spaceInTo);
 
     const fromEl = jugRefs.current[from];
@@ -183,7 +186,7 @@ export function useWaterJugGame(audio: GameAudio) {
     const finalFromVol = initialFromVol - amountToPour;
     const finalToVol = initialToVol + amountToPour;
 
-    const { deltaX, deltaY, tiltSign, toPan } = calculatePourTransform(fromRect, toRect, from, to);
+    const { deltaX, deltaY, tiltSign, toPan } = calculatePourTransform(fromRect, toRect, from, to, capacities.length);
 
     setPourAnimation({ from, to });
 
@@ -247,7 +250,7 @@ export function useWaterJugGame(audio: GameAudio) {
       setPourAnimation(null);
       setPourStyle({});
     }, POUR_FINALIZE_MS);
-  }, [currentVolumes, pourAnimation, isActionBusy, saveHistory, audio, scheduleTimeout, scheduleInterval, clearTrackedInterval, checkWin]);
+  }, [currentVolumes, capacities, pourAnimation, isActionBusy, saveHistory, audio, scheduleTimeout, scheduleInterval, clearTrackedInterval, checkWin]);
 
   const handleJugSelect = useCallback((idx: number) => {
     if (isWinModalOpen || isGameOver) return;
@@ -269,14 +272,14 @@ export function useWaterJugGame(audio: GameAudio) {
 
     const idx = selectedIdx;
     const startVol = currentVolumes[idx];
-    const targetVol = action === 'fill' ? JUGS_CAPACITIES[idx] : 0;
+    const targetVol = action === 'fill' ? capacities[idx] : 0;
     if (startVol === targetVol) return;
 
     saveHistory();
     setSelectedIdx(null);
     setIsActionBusy(true);
 
-    const jugPan = getStereoPan(idx);
+    const jugPan = getStereoPan(idx, capacities.length);
     if (action === 'fill') {
       audio.playWaterScoopSFX(jugPan);
     } else {
@@ -307,7 +310,7 @@ export function useWaterJugGame(audio: GameAudio) {
         setIsActionBusy(false);
       }
     }, PROGRESS_TICK_MS);
-  }, [selectedIdx, pourAnimation, isActionBusy, currentVolumes, saveHistory, audio, scheduleInterval, clearTrackedInterval, checkWin]);
+  }, [selectedIdx, pourAnimation, isActionBusy, currentVolumes, capacities, saveHistory, audio, scheduleInterval, clearTrackedInterval, checkWin]);
 
   const undo = useCallback(() => {
     if (history.length === 0 || pourAnimation || isActionBusy) return;
@@ -334,11 +337,12 @@ export function useWaterJugGame(audio: GameAudio) {
     resetTimer();
     setIsWinModalOpen(false);
     setIsGameOver(false);
-    setTarget(pickRandomTarget());
+    setRound(pickRandomRound());
   }, [clearAllPendingTimers, resetTimer]);
 
   return {
     target,
+    capacities,
     currentVolumes,
     history,
     moves,
