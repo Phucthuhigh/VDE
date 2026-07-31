@@ -2,7 +2,7 @@
 export const JUGS_CAPACITIES = [8, 5, 3] as const;
 
 // Total countdown duration for a round.
-export const TOTAL_TIME_MS = 500_000; // 5 minutes
+export const TOTAL_TIME_MS = 300_000; // 5 minutes
 
 // Candidate target volumes; one is picked at random each round.
 // All values are reachable with JUGS_CAPACITIES = [8, 5, 3].
