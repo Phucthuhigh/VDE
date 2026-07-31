@@ -1,21 +1,68 @@
 // Total countdown duration for a round.
 export const TOTAL_TIME_MS = 300_000; // 5 minutes
 
-export interface RoundPreset {
+export type Difficulty = 'easy' | 'medium' | 'hard';
+
+export const DIFFICULTIES: readonly Difficulty[] = ['easy', 'medium', 'hard'];
+
+export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
+  easy: 'Dễ',
+  medium: 'Trung bình',
+  hard: 'Khó',
+};
+
+interface RoundTarget {
+  value: number;
+  // Minimum moves to solve, bucketed into a difficulty tier.
+  difficulty: Difficulty;
+}
+
+interface RoundPreset {
   // Capacities (in liters) of the three jugs used this round.
   capacities: readonly [number, number, number];
   // Valid target volumes for this capacity set: reachable, not equal to any
   // jug's own capacity (that would be a 1-move win), and not a simple
   // pairwise sum/difference of two capacities (guessable at a glance, e.g.
   // 5-3=2 or 3+3=6) — only genuinely non-obvious puzzles are listed.
-  targets: readonly number[];
+  targets: readonly RoundTarget[];
 }
 
 export const ROUND_PRESETS: readonly RoundPreset[] = [
-  { capacities: [8, 5, 3], targets: [1, 4, 7] },
-  { capacities: [9, 5, 4], targets: [2, 3, 6, 7] },
-  { capacities: [9, 8, 7], targets: [3, 4, 5, 6] },
-  { capacities: [9, 7, 2], targets: [1, 3, 6, 8] },
+  {
+    capacities: [8, 5, 3],
+    targets: [
+      { value: 1, difficulty: 'easy' },
+      { value: 7, difficulty: 'medium' },
+      { value: 4, difficulty: 'medium' },
+    ],
+  },
+  {
+    capacities: [9, 5, 4],
+    targets: [
+      { value: 3, difficulty: 'easy' },
+      { value: 6, difficulty: 'medium' },
+      { value: 2, difficulty: 'medium' },
+      { value: 7, difficulty: 'hard' },
+    ],
+  },
+  {
+    capacities: [9, 8, 7],
+    targets: [
+      { value: 5, difficulty: 'easy' },
+      { value: 6, difficulty: 'easy' },
+      { value: 3, difficulty: 'medium' },
+      { value: 4, difficulty: 'medium' },
+    ],
+  },
+  {
+    capacities: [9, 7, 2],
+    targets: [
+      { value: 1, difficulty: 'easy' },
+      { value: 3, difficulty: 'easy' },
+      { value: 6, difficulty: 'medium' },
+      { value: 8, difficulty: 'hard' },
+    ],
+  },
 ];
 
 export interface Round {
@@ -23,10 +70,17 @@ export interface Round {
   target: number;
 }
 
-export function pickRandomRound(): Round {
-  const preset = ROUND_PRESETS[Math.floor(Math.random() * ROUND_PRESETS.length)];
-  const target = preset.targets[Math.floor(Math.random() * preset.targets.length)];
-  return { capacities: preset.capacities, target };
+// All (preset, target) combos flattened per difficulty, computed once.
+const ROUNDS_BY_DIFFICULTY: Record<Difficulty, Round[]> = { easy: [], medium: [], hard: [] };
+for (const preset of ROUND_PRESETS) {
+  for (const t of preset.targets) {
+    ROUNDS_BY_DIFFICULTY[t.difficulty].push({ capacities: preset.capacities, target: t.value });
+  }
+}
+
+export function pickRandomRound(difficulty: Difficulty): Round {
+  const pool = ROUNDS_BY_DIFFICULTY[difficulty];
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 // Star rating decays as time runs out, in 5 even steps across TOTAL_TIME_MS.

@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState, type CSSProperties } from 'react';
 import confetti from 'canvas-confetti';
 
-import { TOTAL_TIME_MS, getStereoPan, pickRandomRound } from '../config/gameConfig';
+import { TOTAL_TIME_MS, getStereoPan, pickRandomRound, type Difficulty } from '../config/gameConfig';
 import type { GameAudio } from './useGameAudio';
 import { useCountdownTimer } from './useCountdownTimer';
 import { useTrackedTimers } from './useTrackedTimers';
@@ -74,9 +74,13 @@ function buildPourStyle(transform: string, transition: string): CSSProperties {
 }
 
 export function useWaterJugGame(audio: GameAudio) {
+  // Difficulty picked on the start screen; "Chơi lại" re-rolls a round at
+  // this same difficulty rather than reverting to a default.
+  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
+  const [hasStarted, setHasStarted] = useState(false);
   // Capacities and target are tied to the same round preset, so they're kept
   // in one state value to guarantee they always change together.
-  const [round, setRound] = useState(pickRandomRound);
+  const [round, setRound] = useState(() => pickRandomRound('easy'));
   const { capacities, target } = round;
   const [currentVolumes, setCurrentVolumes] = useState<number[]>([0, 0, 0]);
   const [history, setHistory] = useState<number[][]>([]);
@@ -337,10 +341,19 @@ export function useWaterJugGame(audio: GameAudio) {
     resetTimer();
     setIsWinModalOpen(false);
     setIsGameOver(false);
-    setRound(pickRandomRound());
-  }, [clearAllPendingTimers, resetTimer]);
+    setRound(pickRandomRound(difficulty));
+  }, [clearAllPendingTimers, resetTimer, difficulty]);
+
+  const selectDifficulty = useCallback((nextDifficulty: Difficulty) => {
+    setDifficulty(nextDifficulty);
+    setRound(pickRandomRound(nextDifficulty));
+    setHasStarted(true);
+  }, []);
 
   return {
+    hasStarted,
+    difficulty,
+    selectDifficulty,
     target,
     capacities,
     currentVolumes,

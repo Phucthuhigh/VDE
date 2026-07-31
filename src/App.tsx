@@ -10,17 +10,23 @@ import { FishAnimation } from './components/FishAnimation';
 import { DamageOverlay } from './components/DamageOverlay';
 import { GameStatsPanel } from './components/GameStatsPanel';
 import { GameBoard } from './components/GameBoard';
+import { DifficultySelect } from './components/DifficultySelect';
 
-import { TOTAL_TIME_MS, formatTime, getStarRating } from './config/gameConfig';
+import { TOTAL_TIME_MS, formatTime, getStarRating, type Difficulty } from './config/gameConfig';
 import { useGameAudio } from './hooks/useGameAudio';
 import { useWaterJugGame } from './hooks/useWaterJugGame';
 
 function App() {
-  const [isTutorialOpen, setIsTutorialOpen] = useState(true);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const [isRulesExpanded, setIsRulesExpanded] = useState(true);
 
   const audio = useGameAudio();
   const game = useWaterJugGame(audio);
+
+  const handleSelectDifficulty = (difficulty: Difficulty) => {
+    game.selectDifficulty(difficulty);
+    setIsTutorialOpen(true);
+  };
 
   return (
     <div className={`bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-100 via-cyan-300 to-sky-500 text-on-surface font-body-md min-h-screen overflow-x-hidden relative flex flex-col ${game.isDamageFlash ? 'animate-damage-shake' : ''}`}>
@@ -68,6 +74,8 @@ function App() {
           />
         </div>
       </main>
+
+      {!game.hasStarted && <DifficultySelect onSelect={handleSelectDifficulty} />}
 
       <TutorialModal isOpen={isTutorialOpen} onClose={() => setIsTutorialOpen(false)} />
       <WinModal
